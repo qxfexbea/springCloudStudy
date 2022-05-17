@@ -8,6 +8,14 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   application:
     name: orderservice
+  cloud:
+    nacos:
+      server-addr: 192.168.170.223:8848 #nacos服务地址
+      discovery:
+        cluster-name: HZ
+        
+#        namespace: 3e87f8a8-50eb-464e-aceb-2fdbb3705b0d
+
 mybatis:
   type-aliases-package: cn.itcast.user.pojo
   configuration:
@@ -17,7 +25,15 @@ logging:
     cn.itcast: debug
   pattern:
     dateformat: MM-dd HH:mm:ss:SSS
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka
+userservice: # 给某个微服务配置负载均衡规则，这里是userservice服务
+  ribbon:
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule #com.netflix.loadbalancer.RandomRule # 负载均衡规则
+ribbon:
+  eager-load:
+    enabled: true
+    clients:
+      - userservice
