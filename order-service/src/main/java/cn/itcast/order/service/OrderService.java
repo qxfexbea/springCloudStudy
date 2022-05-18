@@ -1,8 +1,9 @@
 package cn.itcast.order.service;
 
+import cn.itcast.feign.client.UserClient;
+import cn.itcast.feign.pojo.User;
 import cn.itcast.order.mapper.OrderMapper;
 import cn.itcast.order.pojo.Order;
-import cn.itcast.order.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,8 +15,21 @@ public class OrderService {
     private OrderMapper orderMapper;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private UserClient userClient;
     public Order queryOrderById(Long orderId) {
         // 1.查询订单
+        Order order = orderMapper.findById(orderId);
+        System.out.println(order.toString());
+        System.out.println(order.getUserId());
+        // 2 利用feign发起http请求,查询用户
+        User user = userClient.findById(order.getUserId());
+        System.out.println(user.toString());
+        // 3 封装User到order
+        order.setUser(user);
+        return order;
+
+        /*// 1.查询订单
         Order order = orderMapper.findById(orderId);
         // 2 利用RestTemplate发起http请求，查询用户
         // 2.1 url路径
@@ -25,6 +39,6 @@ public class OrderService {
         //3 封装user到Order
         order.setUser(user);
         // 4.返回
-        return order;
+        return order;*/
     }
 }
